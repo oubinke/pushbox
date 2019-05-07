@@ -1,0 +1,41 @@
+table {
+    border-collapse: collapse;
+    margin: auto;
+}
+td {
+    width: 80px;
+    height: 80px;
+    background-color: #000;
+}
+.wall {
+    background: url(img/wall.png);
+    background-size: 80px 80px;
+}
+
+.ground {
+    background: url(img/ground.png);
+    background-size: 80px 80px;
+}
+
+.man {
+    background: url(img/man.jpg);
+    background-size: 80px 80px;
+}
+
+.box {
+    background: url(img/box.png);
+    background-size: 80px 80px;
+}
+
+.target {
+    background: url(img/target.png);
+    background-size: 80px 80px;
+}
+
+.arrive {
+    background: url(img/arrive.png);
+    background-size: 80px 80px;
+}
+.prompt {
+    float: left;
+}
