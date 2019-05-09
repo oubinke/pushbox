@@ -8,7 +8,10 @@ function $$(selector) { // 将原生方法抽象一下
 
 function main() { // 主函数
     initMap(gameData[0]); // 初始化第一关数据
-    console.log(gameData[0]);
+    var record = []; // 初始化记录，用于后悔
+    // pointer = 0; // pointer指向关卡当前的布局
+    record.push($('table').innerHTML);
+    console.log(record, pointer);
     var select = $('select');
     var html = '';
     for (var i = 0; i < 15; i++) {
@@ -24,11 +27,29 @@ function main() { // 主函数
         this.blur();
     }
 
-    $('button').onclick = function (event) { // 重试
-        initMap(gameData[parseInt(select.value.substring(1, 3)) - 1])
+    $$('restart').onclick = function (event) { // 重试
+        initMap(gameData[parseInt(select.value.substring(1, 3)) - 1]);
+        pointer = 0;
+        record = [];
     }
 
-    keyEvent();
+    // 退后
+    $$('back').onclick = function () {
+        if (pointer > 0) {
+            pointer--;
+            $('table').innerHTML = record[pointer];
+        }
+        console.log(record, pointer);
+    }
+    // 往前
+    $$('forward').onclick = function() {
+        if (pointer < record.length - 1) {
+            pointer++;
+            $('table').innerHTML = record[pointer];
+        }
+    }
+
+    keyEvent(record);
 }
 
 function initMap(data) { // 画图
@@ -59,9 +80,11 @@ function setMapClass(data) { // 给每一个格子赋上一个类名
             $$(i + '_' + j).dataset.class = keys[e];
         });
     });
+    
+    // console.log($('table').innerHTML)
 }
 
-function keyEvent() { // 监控键盘事件
+function keyEvent(record) { // 监控键盘事件
     document.onkeydown = function (event) {
         var cur = $('.man').id.split('_');
         // row和col表示下一位置
@@ -126,14 +149,14 @@ function keyEvent() { // 监控键盘事件
                 }
                 break;
             default:
-                break;
+                return;
         }
         // 根据当前位置，下一位置，方向来移动小人
-        move(cur, [row, col], direction);
+        move(cur, [row, col], direction, record);  
     }
 }
 
-function move(cur, next, direction) { // cur当前点 next下一点 direction代表移动方向
+function move(cur, next, direction, record) { // cur当前点 next下一点 direction代表移动方向
     var row = next[0];
     var col = next[1];
     // 如果当前位置原本为target或者ground，小人移动走后，需要将当前位置还原
@@ -169,9 +192,15 @@ function move(cur, next, direction) { // cur当前点 next下一点 direction代
             $$(next[0] + '_' + next[1]).className = 'man';
         }
     }
+    if (pointer !== record.length - 1) {
+        record.splice(pointer + 1);   
+    }
+    record.push($('table').innerHTML);
+    pointer++;
+    console.log(record, pointer);
     setTimeout(function () {
         isWin();
-    }, 1000)
+    }, 1000);
 }
 
 function isWin() { // 是否过关
@@ -182,10 +211,14 @@ function isWin() { // 是否过关
         } else {
             alert('恭喜你通关了, 再接再励，攻克下一关');
             var level = parseInt($('.level span').innerHTML);
-            initMap(gameData[level])
+            initMap(gameData[level]);
+            pointer = 0;
+            record = [];
             $('.level').innerHTML = 'level <span>' + (level + 1) + '</span>';
             $('select').value = '第' + (level + 1) + '关';
         }
     }
 }
+
+pointer = 0;
 main();

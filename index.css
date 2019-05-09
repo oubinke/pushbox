@@ -39,3 +39,7 @@ td {
 .prompt {
     float: left;
 }
+
+button {
+    margin: 10px auto;
+}
