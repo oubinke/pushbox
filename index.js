@@ -8,9 +8,9 @@ function $$(selector) { // 将原生方法抽象一下
 
 function main() { // 主函数
     initMap(gameData[0]); // 初始化第一关数据
-    var record = []; // 初始化记录，用于后悔
+    // var record = []; // 初始化记录，用于后悔
     // pointer = 0; // pointer指向关卡当前的布局
-    record.push($('table').innerHTML);
+    // record.push($('table').innerHTML);
     console.log(record, pointer);
     var select = $('select');
     var html = '';
@@ -29,8 +29,6 @@ function main() { // 主函数
 
     $$('restart').onclick = function (event) { // 重试
         initMap(gameData[parseInt(select.value.substring(1, 3)) - 1]);
-        pointer = 0;
-        record = [];
     }
 
     // 退后
@@ -49,7 +47,7 @@ function main() { // 主函数
         }
     }
 
-    keyEvent(record);
+    keyEvent();
 }
 
 function initMap(data) { // 画图
@@ -63,6 +61,9 @@ function initMap(data) { // 画图
     }
     $('table').innerHTML = html;
     setMapClass(data.map);
+    pointer = 0;
+    record = [];
+    record.push($('table').innerHTML);
 }
 
 function setMapClass(data) { // 给每一个格子赋上一个类名
@@ -84,7 +85,7 @@ function setMapClass(data) { // 给每一个格子赋上一个类名
     // console.log($('table').innerHTML)
 }
 
-function keyEvent(record) { // 监控键盘事件
+function keyEvent() { // 监控键盘事件
     document.onkeydown = function (event) {
         var cur = $('.man').id.split('_');
         // row和col表示下一位置
@@ -152,11 +153,11 @@ function keyEvent(record) { // 监控键盘事件
                 return;
         }
         // 根据当前位置，下一位置，方向来移动小人
-        move(cur, [row, col], direction, record);  
+        move(cur, [row, col], direction);  
     }
 }
 
-function move(cur, next, direction, record) { // cur当前点 next下一点 direction代表移动方向
+function move(cur, next, direction) { // cur当前点 next下一点 direction代表移动方向
     var row = next[0];
     var col = next[1];
     // 如果当前位置原本为target或者ground，小人移动走后，需要将当前位置还原
@@ -212,13 +213,11 @@ function isWin() { // 是否过关
             alert('恭喜你通关了, 再接再励，攻克下一关');
             var level = parseInt($('.level span').innerHTML);
             initMap(gameData[level]);
-            pointer = 0;
-            record = [];
             $('.level').innerHTML = 'level <span>' + (level + 1) + '</span>';
             $('select').value = '第' + (level + 1) + '关';
         }
     }
 }
 
-pointer = 0;
+var pointer = 0, record = [];
 main();
